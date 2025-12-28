@@ -1,0 +1,548 @@
+  
+# Documentation Of Task
+
+### Part-1
+- Identify a way to parse/provide the conversation to the model (thinking of speaker encoding)
+- Model Architecture replicate some paper
+- Finalize/Experiment a little with various optimizers loss and stuff
+- Also try to add the eval batches step like in the hf transformers repo issue4
+- _Segement Embedding (inspo from bert)
+	- Basically like one more embedding is created and added with positional and token embedding
+	- That is like tokens from 1st Speaker are assigned segment embedding value of 0 and 1 for that of speaker 2
+	- _[Sep]_ token is given the same segment enocded value as that of the preceeding token's segment embedding  
+### Part-2
+- Try implementing emotion specific attention layer
+
+
+## Experiments
+
+### Experiment 1
+
+**Best Test F1 --> F1 Act:0.3798332931463562
+F1 Emotion:0.20281247330023966**
+
+**Best Test Acc --> Act acc: 57.09%    Emotion Acc: 85.92%**
+**Best Training Acc --> Act acc: 55.39%   Emotion Acc: 85.29%**
+
+**Inference** : Good/Decent Accuracy But Bad F1 Score because of class imbalance which has to be handled 
+
+- Class Imbalance 
+- Cross Entropy Loss (weightage::1:1)
+- lr=3e-5
+- 3 trans block with 3 heads each
+- emb:300
+- tokenizer & emb: fasttext cc 300 bin
+
+#### Logs:
+```
+
+TEST_DATA
+
+
+Epoch:1
+F1 Act:0.2671284916819097
+F1 Emotion:0.13080372724784245
+
+
+Epoch:1    Act Accuracy:51.09570    Emotion Accuracy:84.43823
+
+TRAIN_DATA
+Epoch:1    Loss_act:1.22351    Loss_emotion:0.59310    Act Accuracy:45.23697    Emotion Accuracy:84.36975
+
+Epoch:2
+F1 Act:0.2671284916819097
+F1 Emotion:0.13080372724784245
+
+TEST_DATA
+
+
+Epoch:2
+F1 Act:0.3215811881743653
+F1 Emotion:0.15240308892093898
+
+
+Epoch:2    Act Accuracy:53.14389    Emotion Accuracy:84.95717
+
+TRAIN_DATA
+Epoch:2    Loss_act:1.08960    Loss_emotion:0.54564    Act Accuracy:52.32897    Emotion Accuracy:84.56021
+TEST_DATA
+
+
+Epoch:3
+F1 Act:0.38818943887931473
+F1 Emotion:0.14274190201882178
+
+
+Epoch:3    Act Accuracy:54.57460    Emotion Accuracy:84.77850
+
+TRAIN_DATA
+Epoch:3    Loss_act:1.04828    Loss_emotion:0.51185    Act Accuracy:53.77259    Emotion Accuracy:84.95691
+TEST_DATA
+
+
+Epoch:4
+F1 Act:0.348242910116171
+F1 Emotion:0.14626212913024197
+
+
+Epoch:4    Act Accuracy:54.07930    Emotion Accuracy:84.89674
+
+TRAIN_DATA
+Epoch:4    Loss_act:1.03304    Loss_emotion:0.49830    Act Accuracy:54.07866    Emotion Accuracy:85.07120
+TEST_DATA
+
+
+Epoch:5
+F1 Act:0.3371811243871011
+F1 Emotion:0.17607846154814788
+
+
+Epoch:5    Act Accuracy:53.58794    Emotion Accuracy:85.48794
+
+TRAIN_DATA
+Epoch:5    Loss_act:1.02070    Loss_emotion:0.48920    Act Accuracy:54.40836    Emotion Accuracy:85.20518
+TEST_DATA
+
+
+Epoch:6
+F1 Act:0.38355220699122544
+F1 Emotion:0.16200797686691099
+
+
+Epoch:6    Act Accuracy:53.79815    Emotion Accuracy:85.30795
+
+TRAIN_DATA
+Epoch:6    Loss_act:1.01245    Loss_emotion:0.48228    Act Accuracy:54.58964    Emotion Accuracy:85.31552
+TEST_DATA
+
+
+Epoch:7
+F1 Act:0.41166807053602517
+F1 Emotion:0.1511985754388547
+
+
+Epoch:7    Act Accuracy:55.13558    Emotion Accuracy:85.09512
+
+TRAIN_DATA
+Epoch:7    Loss_act:1.00396    Loss_emotion:0.47688    Act Accuracy:55.03888    Emotion Accuracy:85.34705
+TEST_DATA
+
+
+Epoch:8
+F1 Act:0.42822116458459925
+F1 Emotion:0.1890494345002187
+
+
+Epoch:8    Act Accuracy:56.05523    Emotion Accuracy:85.42751
+
+TRAIN_DATA
+Epoch:8    Loss_act:0.99704    Loss_emotion:0.46875    Act Accuracy:55.18469    Emotion Accuracy:85.51387
+TEST_DATA
+
+
+Epoch:9
+F1 Act:0.3798332931463562
+F1 Emotion:0.20281247330023966
+
+
+Epoch:9    Act Accuracy:55.81350    Emotion Accuracy:85.68238
+
+TRAIN_DATA
+Epoch:9    Loss_act:0.99136    Loss_emotion:0.46513    Act Accuracy:55.37384    Emotion Accuracy:85.52438
+
+Epoch:10
+F1 Act:0.3798332931463562
+F1 Emotion:0.20281247330023966
+
+TEST_DATA
+
+
+Epoch:10
+F1 Act:0.44782670083304
+F1 Emotion:0.1772169225682121
+
+
+Epoch:10    Act Accuracy:56.29960    Emotion Accuracy:85.64428
+
+TRAIN_DATA
+Epoch:10    Loss_act:0.98529    Loss_emotion:0.45991    Act Accuracy:55.66283    Emotion Accuracy:85.54802
+TEST_DATA
+
+
+Epoch:11
+F1 Act:0.4439918761234632
+F1 Emotion:0.1809102442929503
+
+
+Epoch:11    Act Accuracy:56.49535    Emotion Accuracy:85.70471
+
+TRAIN_DATA
+Epoch:11    Loss_act:0.97951    Loss_emotion:0.45536    Act Accuracy:55.93080    Emotion Accuracy:85.75820
+TEST_DATA
+
+
+Epoch:12
+F1 Act:0.4179570436503025
+F1 Emotion:0.19763812437738362
+
+
+Epoch:12    Act Accuracy:57.09706    Emotion Accuracy:85.92937
+
+TRAIN_DATA
+Epoch:12    Loss_act:0.97220    Loss_emotion:0.44929    Act Accuracy:56.29992    Emotion Accuracy:85.76345
+```
+
+#### Loss,Accuracy Vs Epoches Grpah
+
+
+### Experiment 2
+
+- Class Weight Balancing                                                                             
+- Cross Entropy Loss (weightage::1:1)
+- lr=3e-5
+- 3 trans block with 3 heads each
+- emb:300
+- tokenizer & emb: fasttext cc 300 bin
+
+#### Logs:
+```
+TEST_DATA
+
+
+Epoch:1
+F1 Act:0.15297394888254656
+F1 Emotion:0.028609935450310927
+
+
+Epoch:1    Act Accuracy:44.08140    Emotion Accuracy:11.12775
+
+TRAIN_DATA
+Epoch:1    Loss_act:1.40923    Loss_emotion:1.29403    Act Accuracy:28.64124    Emotion Accuracy:11.02748
+TEST_DATA
+
+
+Epoch:2
+F1 Act:0.3518318754998016
+F1 Emotion:0.08006268791215865
+
+
+Epoch:2    Act Accuracy:48.19092    Emotion Accuracy:19.17994
+
+TRAIN_DATA
+Epoch:2    Loss_act:1.32087    Loss_emotion:1.23405    Act Accuracy:41.53005    Emotion Accuracy:11.70791
+TEST_DATA
+
+
+Epoch:3
+F1 Act:0.3628157716013747
+F1 Emotion:0.08566625037259325
+
+
+Epoch:3    Act Accuracy:37.52693    Emotion Accuracy:24.08823
+
+TRAIN_DATA
+Epoch:3    Loss_act:1.22336    Loss_emotion:1.13486    Act Accuracy:45.66125    Emotion Accuracy:15.31762
+TEST_DATA
+
+
+Epoch:4
+F1 Act:0.4309165057309778
+F1 Emotion:0.08097437669239095
+
+
+Epoch:4    Act Accuracy:50.19575    Emotion Accuracy:18.26817
+
+TRAIN_DATA
+Epoch:4    Loss_act:1.19654    Loss_emotion:1.06851    Act Accuracy:46.01198    Emotion Accuracy:18.19042
+TEST_DATA
+
+
+Epoch:5
+F1 Act:0.3883809358725361
+F1 Emotion:0.10795813663990497
+
+
+Epoch:5    Act Accuracy:41.39340    Emotion Accuracy:25.46377
+
+TRAIN_DATA
+Epoch:5    Loss_act:1.18256    Loss_emotion:1.04747    Act Accuracy:46.61097    Emotion Accuracy:19.51187
+TEST_DATA
+
+
+Epoch:6
+F1 Act:0.43689543143280396
+F1 Emotion:0.06556071030247133
+
+
+Epoch:6    Act Accuracy:54.14893    Emotion Accuracy:14.48316
+
+TRAIN_DATA
+Epoch:6    Loss_act:1.16801    Loss_emotion:1.03093    Act Accuracy:46.93411    Emotion Accuracy:21.88945
+TEST_DATA
+
+
+Epoch:7
+F1 Act:0.4027198144920897
+F1 Emotion:0.08889046809858765
+
+
+Epoch:7    Act Accuracy:45.00631    Emotion Accuracy:19.13527
+
+TRAIN_DATA
+Epoch:7    Loss_act:1.16109    Loss_emotion:1.00489    Act Accuracy:47.28221    Emotion Accuracy:22.82209
+TEST_DATA
+
+
+Epoch:8
+F1 Act:0.39956639348771045
+F1 Emotion:0.1287608262003725
+
+
+Epoch:8    Act Accuracy:41.69557    Emotion Accuracy:30.69394
+
+TRAIN_DATA
+Epoch:8    Loss_act:1.15232    Loss_emotion:1.00718    Act Accuracy:47.60272    Emotion Accuracy:23.97804
+TEST_DATA
+
+
+Epoch:9
+F1 Act:0.43294640524985806
+F1 Emotion:0.1905593257103551
+
+
+Epoch:9    Act Accuracy:48.84650    Emotion Accuracy:50.45851
+
+TRAIN_DATA
+Epoch:9    Loss_act:1.14252    Loss_emotion:0.97932    Act Accuracy:47.72751    Emotion Accuracy:25.60687
+TEST_DATA
+
+
+Epoch:10
+F1 Act:0.4383341967103985
+F1 Emotion:0.13002054072695127
+
+
+Epoch:10    Act Accuracy:48.98050    Emotion Accuracy:27.85091
+
+TRAIN_DATA
+Epoch:10    Loss_act:1.13290    Loss_emotion:0.97636    Act Accuracy:48.08743    Emotion Accuracy:26.22163
+TEST_DATA
+
+
+Epoch:11
+F1 Act:0.4164206706129241
+F1 Emotion:0.11899984719701266
+
+
+Epoch:11    Act Accuracy:44.79347    Emotion Accuracy:20.40044
+
+TRAIN_DATA
+Epoch:11    Loss_act:1.12855    Loss_emotion:0.96917    Act Accuracy:48.40269    Emotion Accuracy:27.28956
+TEST_DATA
+
+
+Epoch:12
+F1 Act:0.440040862118553
+F1 Emotion:0.19634168809839975
+
+
+Epoch:12    Act Accuracy:49.14341    Emotion Accuracy:44.19439
+
+TRAIN_DATA
+Epoch:12    Loss_act:1.12721    Loss_emotion:0.94948    Act Accuracy:48.28710    Emotion Accuracy:27.71254
+TEST_DATA
+
+
+Epoch:13
+F1 Act:0.4288405347677659
+F1 Emotion:0.1348021833352578
+
+
+Epoch:13    Act Accuracy:51.15744    Emotion Accuracy:32.62520
+
+TRAIN_DATA
+Epoch:13    Loss_act:1.12153    Loss_emotion:0.94948    Act Accuracy:48.43947    Emotion Accuracy:27.90563
+TEST_DATA
+
+
+Epoch:14
+F1 Act:0.42817935453863926
+F1 Emotion:0.16882492600340168
+
+
+Epoch:14    Act Accuracy:45.56072    Emotion Accuracy:30.90546
+
+TRAIN_DATA
+Epoch:14    Loss_act:1.11754    Loss_emotion:0.92889    Act Accuracy:48.59841    Emotion Accuracy:28.51907
+TEST_DATA
+
+
+Epoch:15
+F1 Act:0.4231397687354939
+F1 Emotion:0.19139300309615653
+
+
+Epoch:15    Act Accuracy:49.73199    Emotion Accuracy:44.09585
+
+TRAIN_DATA
+Epoch:15    Loss_act:1.11098    Loss_emotion:0.90845    Act Accuracy:48.68905    Emotion Accuracy:28.75814
+TEST_DATA
+
+
+Epoch:16
+F1 Act:0.41914654102424403
+F1 Emotion:0.1578573686940301
+
+
+Epoch:16    Act Accuracy:43.70040    Emotion Accuracy:29.86363
+
+TRAIN_DATA
+Epoch:16    Loss_act:1.10678    Loss_emotion:0.90984    Act Accuracy:49.11728    Emotion Accuracy:28.62941
+```
+
+#### Loss,Accuracy Vs Epoches Graph
+![[Pasted image 20251227211945.png]]
+### Experiment 3
+
+- Log-Class Weight Balancing                                                                             
+- Cross Entropy Loss (weightage::1:1)
+- lr=3e-5
+- 3 trans block with 3 heads each
+- emb:300
+- tokenizer & emb: fasttext cc 300 bin
+
+#### Logs
+```
+TEST_DATA
+
+
+Epoch:1
+F1 Act:0.2632140559601257
+F1 Emotion:0.15591340830823622
+
+
+Epoch:1    Act Accuracy:50.81455    Emotion Accuracy:81.64512
+
+TRAIN_DATA
+Epoch:1    Loss_act:1.33858    Loss_emotion:1.17636    Act Accuracy:41.43548    Emotion Accuracy:76.37006
+TEST_DATA
+
+
+Epoch:2
+F1 Act:0.36415265010277814
+F1 Emotion:0.18136402737453822
+
+
+Epoch:2    Act Accuracy:53.43160    Emotion Accuracy:84.82579
+
+TRAIN_DATA
+Epoch:2    Loss_act:1.19178    Loss_emotion:1.07395    Act Accuracy:51.25315    Emotion Accuracy:74.59016
+TEST_DATA
+
+
+Epoch:3
+F1 Act:0.4366205577034156
+F1 Emotion:0.164973656832242
+
+
+Epoch:3    Act Accuracy:49.43245    Emotion Accuracy:64.70519
+
+TRAIN_DATA
+Epoch:3    Loss_act:1.13965    Loss_emotion:0.98924    Act Accuracy:52.18185    Emotion Accuracy:76.23870
+TEST_DATA
+
+
+Epoch:4
+F1 Act:0.446708084900981
+F1 Emotion:0.19548427804419363
+
+
+Epoch:4    Act Accuracy:52.06527    Emotion Accuracy:78.50780
+
+TRAIN_DATA
+Epoch:4    Loss_act:1.12096    Loss_emotion:0.96352    Act Accuracy:52.38152    Emotion Accuracy:76.65511
+TEST_DATA
+
+
+Epoch:5
+F1 Act:0.3937881258464584
+F1 Emotion:0.19685631929954886
+
+
+Epoch:5    Act Accuracy:52.31752    Emotion Accuracy:80.29586
+
+TRAIN_DATA
+Epoch:5    Loss_act:1.10784    Loss_emotion:0.93981    Act Accuracy:52.91351    Emotion Accuracy:76.81668
+TEST_DATA
+
+
+Epoch:6
+F1 Act:0.4086549414197768
+F1 Emotion:0.2165065178597731
+
+
+Epoch:6    Act Accuracy:55.61117    Emotion Accuracy:71.55920
+
+TRAIN_DATA
+Epoch:6    Loss_act:1.09684    Loss_emotion:0.92900    Act Accuracy:53.11843    Emotion Accuracy:76.88104
+TEST_DATA
+
+
+Epoch:7
+F1 Act:0.4583626706404825
+F1 Emotion:0.19593726265764175
+
+
+Epoch:7    Act Accuracy:55.19208    Emotion Accuracy:65.21625
+
+TRAIN_DATA
+Epoch:7    Loss_act:1.08664    Loss_emotion:0.91406    Act Accuracy:53.54929    Emotion Accuracy:76.89418
+TEST_DATA
+
+
+Epoch:8
+F1 Act:0.4071404704653956
+F1 Emotion:0.2028452867948672
+
+
+Epoch:8    Act Accuracy:52.28730    Emotion Accuracy:67.68616
+
+TRAIN_DATA
+Epoch:8    Loss_act:1.08116    Loss_emotion:0.90068    Act Accuracy:53.86192    Emotion Accuracy:76.86265
+TEST_DATA
+
+
+Epoch:9
+F1 Act:0.4360088458189058
+F1 Emotion:0.1981254557972049
+
+
+Epoch:9    Act Accuracy:52.95207    Emotion Accuracy:63.17069
+
+TRAIN_DATA
+Epoch:9    Loss_act:1.07437    Loss_emotion:0.88925    Act Accuracy:54.06421    Emotion Accuracy:77.25541 
+```
+
+
+#### Report
+- To get an idea of where exactly its goin wrong
+```
+              precision    recall  f1-score   support
+
+           0     0.9258    0.7133    0.8058     64271
+           1     0.3182    0.0095    0.0184       738
+           2     0.4615    0.0223    0.0426       269
+           3     0.7500    0.0231    0.0448       130
+           4     0.2600    0.8034    0.3928      8470
+           5     0.2462    0.0585    0.0945       821
+           6     0.2995    0.0395    0.0698      1417
+
+    accuracy                         0.6933     76116
+   macro avg     0.4659    0.2385    0.2098     76116
+weighted avg     0.8249    0.6933    0.7268     76116
+```
+#### Loss,Accuracy Vs Epoches Graph
+
+![[Pasted image 20251227214256.png]]
+
+### Experiment 4
